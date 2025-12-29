@@ -125,4 +125,3 @@ def configure_app_logging():
     root_logger.addHandler(console_handler)
     
     return root_logger
-
