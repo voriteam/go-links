@@ -2,6 +2,7 @@
 import json
 import logging
 import sys
+import traceback
 from datetime import datetime, timezone
 from gunicorn.glogging import Logger
 
@@ -20,7 +21,6 @@ class JSONFormatter(logging.Formatter):
             'timestamp': datetime.now(timezone.utc).isoformat(),
         }
         if record.exc_info:
-            import traceback
             log_entry['exception'] = ''.join(traceback.format_exception(*record.exc_info))
         return json.dumps(log_entry)
 
