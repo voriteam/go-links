@@ -31,26 +31,6 @@ class GCPLogger(Logger):
     def setup(self, cfg):
         super().setup(cfg)
         self._set_handler(self.error_log, cfg.errorlog, JSONFormatter())
-        if self.access_log and not self.access_log.handlers:
-            handler = logging.StreamHandler(sys.stdout)
-            handler.setFormatter(logging.Formatter("%(message)s"))
-            self.access_log.addHandler(handler)
-            self.access_log.setLevel(logging.INFO)
-    
-    def access(self, resp, req, environ, request_time):
-        if not (self.access_log and self.access_log.handlers):
-            return
-        latency = request_time.total_seconds() if hasattr(request_time, 'total_seconds') else float(request_time)
-        self.access_log.info(json.dumps({
-            'severity': 'INFO',
-            'message': f'{environ.get("REMOTE_ADDR", "-")} - "{req.method} {req.path} {req.version}" {resp.status_code} {getattr(resp, "response_length", "-")}',
-            'timestamp': datetime.now(timezone.utc).isoformat(),
-            'httpRequest': {
-                'requestMethod': req.method, 'requestUrl': req.path, 'status': resp.status_code,
-                'userAgent': environ.get('HTTP_USER_AGENT', ''), 'remoteIp': environ.get('REMOTE_ADDR', ''),
-                'latency': f'{latency:.6f}s',
-            }
-        }))
 
 
 def configure_app_logging():
