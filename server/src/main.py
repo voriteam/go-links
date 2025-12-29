@@ -15,6 +15,11 @@ from werkzeug.routing import BaseConverter
 from shared_helpers import config, feature_flags
 from db import db
 
+# Configure GCP-compatible structured logging if in production
+if os.getenv('ENVIRONMENT') == 'production':
+    from gcp_logging import configure_app_logging
+    configure_app_logging()
+
 sentry_config = config.get_config_by_key_path(['monitoring', 'sentry'])
 if sentry_config:
   from sentry_sdk.integrations.flask import FlaskIntegration
